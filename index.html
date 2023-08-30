@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontend App</title>
+</head>
+<body>
+  <h1>Data Transmission and Decoding Status</h1>
+  <div>
+    <p>Success Rate: <span id="successRate">0%</span></p>
+  </div>
+  <div>
+    <h2>Decoded Data</h2>
+    <ul id="decodedDataList"></ul>
+  </div>
+
+  
+  <script>
+    const socket = io();
+
+    const successRateElement = document.getElementById('successRate');
+    const decodedDataList = document.getElementById('decodedDataList');
+
+    let successCount = 0;
+    let totalCount = 0;
+
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+
+    socket.on('dataStreamStatus', (status) => {
+      if (status === 'success') {
+        successCount++;
+      }
+      totalCount++;
+
+      const successRate = (successCount / totalCount) * 100;
+      successRateElement.textContent = successRate.toFixed(2) + '%';
+    });
+
+    socket.on('decodedData', (data) => {
+      const li = document.createElement('li');
+      li.textContent = JSON.stringify(data);
+      decodedDataList.appendChild(li);
+    });
+    // ... (other imports and code)
+
+// ... (other code)
+
+  </script>
+</body>
+</html>
